@@ -32,11 +32,14 @@ def download():
 
     with tempfile.TemporaryDirectory(dir=TMP) as job:
         out=str(Path(job)/"%(title).100s.%(ext)s")
-        cmd=["yt-dlp","--no-playlist","--max-filesize",f"{MAX_MB}M","--restrict-filenames","-f",fmt,"-o",out,"--merge-output-format","mp4","--no-warnings",url]
+        cmd=["yt-dlp","--verbose","--no-playlist","--max-filesize",f"{MAX_MB}M","--restrict-filenames","-f",fmt,"-o",out,"--merge-output-format","mp4","--no-warnings",url]
         if q=="audio": cmd += ["-x","--audio-format","mp3"]
         try: r=subprocess.run(cmd,capture_output=True,text=True,timeout=TIMEOUT)
         except subprocess.TimeoutExpired: return jsonify(error="Download timed out."),504
         if r.returncode!=0:
+            print("===== YT-DLP ERROR =====", flush=True)
+            print(r.stderr[-10000:], flush=True)
+            print("===== END YT-DLP ERROR =====", flush=True)
             return jsonify(error="yt-dlp could not download this video.",details=r.stderr[-3000:]),500
         files=[p for p in Path(job).iterdir() if p.is_file() and not p.name.endswith((".part",".ytdl"))]
         if not files: return jsonify(error="No output file was produced."),500
