@@ -32,7 +32,7 @@ def download():
 
     with tempfile.TemporaryDirectory(dir=TMP) as job:
         out=str(Path(job)/"%(title).100s.%(ext)s")
-        cmd=["yt-dlp","--verbose","--no-playlist","--max-filesize",f"{MAX_MB}M","--restrict-filenames","-f",fmt,"-o",out,"--merge-output-format","mp4","--no-warnings",url]
+        cmd=["yt-dlp","--verbose","--no-playlist","--max-filesize",f"{MAX_MB}M","--restrict-filenames","--extractor-args","youtubepot-bgutilhttp:base_url=http://127.0.0.1:4416","-f",fmt,"-o",out,"--merge-output-format","mp4","--no-warnings",url]
         if q=="audio": cmd += ["-x","--audio-format","mp3"]
         try: r=subprocess.run(cmd,capture_output=True,text=True,timeout=TIMEOUT)
         except subprocess.TimeoutExpired: return jsonify(error="Download timed out."),504
