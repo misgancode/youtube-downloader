@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     unzip \
     nodejs \
+    npm \
     libcairo2-dev \
     libpango1.0-dev \
     libjpeg62-turbo-dev \
